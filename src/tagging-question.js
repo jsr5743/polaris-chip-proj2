@@ -1,118 +1,182 @@
 import { LitElement, html, css } from 'lit';
+import { DDD } from "@lrnwebcomponents/d-d-d/d-d-d.js";
 
-class TaggingQuestion extends LitElement {
-
+export class TaggingQuestion extends DDD {
   static get properties() {
     return {
-      question: { type: String }, // The question text
-      imageUrl: { type: String }, // URL of the optional image
-      tagsData: { type: Array }, // Array of tag objects { tag: string, correct: boolean, feedback: string }
+      image: { type: String },
+      question: { type: String },
+      answerSet: { type: String },
+      tagOptions: { type: Array },
+      tagAnswers: { type: Array },
+      submitted: { type: Boolean },
     };
   }
 
   constructor() {
     super();
+    this.image = '';
     this.question = '';
-    this.imageUrl = '';
-    this.tagsData = [];
-    this.selectedTags = [];
-    this.isChecking = false;
+    this.answerSet = '';
+    this.tagOptions = [];
+    this.tagAnswers = [];
+    this.submitted = false;
+    this.loadTagsData();
   }
 
   static get styles() {
     return css`
-      :host {
-        display: block;
-        padding: 20px;
-        border: 1px solid #ccc;
+      .tag-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border: 2px solid #ccc;
         border-radius: 8px;
-        margin-bottom: 20px;
+        padding: 20px;
+        max-width: 600px;
+        margin: auto;
       }
-      img {
+
+      .image {
         max-width: 100%;
         height: auto;
-        margin-bottom: 20px;
+        border-radius: 8px;
+        margin-bottom: 16px;
       }
-      .tags-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-bottom: 20px;
-      }
-      .tag {
+
+      .tag-option {
         padding: 8px 12px;
-        background-color: #f0f0f0;
-        border: 1px solid #ccc;
-        border-radius: 20px;
+        margin: 4px;
+        border: 2px solid #ccc;
+        border-radius: 8px;
         cursor: pointer;
+        user-select: none;
+        background-color: #f0f0f0;
       }
-      .selected {
-        border-color: green;
+
+      .user-choice-container {
+        min-height: 100px;
+        border: 2px dashed #ccc;
+        border-radius: 8px;
+        padding: 10px;
+        margin-top: 16px;
       }
-      .incorrect {
-        border-color: red;
+
+      #submit-button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 16px;
       }
-      .feedback {
-        margin-top: 10px;
-        font-style: italic;
-        color: #666;
-      }
-      .button-container {
-        margin-top: 20px;
+
+      #submit-button:hover {
+        background-color: #0056b3;
       }
     `;
   }
 
   render() {
     return html`
-      ${this.imageUrl ? html`<img src="${this.imageUrl}" alt="Question Image">` : ''}
-      <div>${this.question}</div>
-      <div class="tags-container">
-        ${this.shuffleTags().map(tag => html`
-          <div class="tag ${this.selectedTags.includes(tag) ? 'selected' : ''}" @click="${() => this.toggleTag(tag)}">${tag}</div>
-        `)}
+      <div class="tag-container">
+        <img class="image" src="${this.image}" alt="Image">
+        <p>${this.question}</p>
+        <div>
+          ${this.tagOptions.map(
+            tagOption => html`
+              <div
+                class="tag-option"
+                draggable="true"
+                @dragstart="${(e) => this.handleDragStart(e, tagOption)}"
+              >
+                ${tagOption}
+              </div>
+            `
+          )}
+        </div>
+        <div
+          id="submit-area"
+          class="user-choice-container"
+          @dragover="${this.handleDragOver}"
+          @drop="${this.handleDrop}"
+          <p>Drag selected tags here to submit:</p>
+          ${this.renderSelectedTags()}
+        </div>
+        <button id="submit-button" @click="${this.submitAnswers}">Submit</button>
       </div>
-      <div class="button-container">
-        <button @click="${this.checkAnswers}" ?disabled="${this.isChecking}">Check Answers</button>
-        <button @click="${this.resetSelections}">Reset</button>
-      </div>
-      ${this.isChecking ? this.renderFeedback() : ''}
     `;
   }
 
-  shuffleTags() {
-    // Shuffle tags to display them in random order
-    return [...this.tagsData.map(tagObj => tagObj.tag)].sort(() => Math.random() - 0.5);
+  loadTagsData() {
+    fetch("./src/tagging-answers.json")
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch tags data');
+        }
+        return response.json();
+      })
+      .then(tagsData => {
+        const tagSet = tagsData[this.answerSet];
+        if (tagSet) {
+          this.tagOptions = tagSet.tagOptions || [];
+          this.tagAnswers = tagSet.tagAnswers || [];
+        } else {
+          throw new Error(`tagSet '${this.answerSet}' not found`);
+        }
+        this.requestUpdate(); // Trigger re-render after data loading
+      })
+      .catch(error => {
+        console.error('Error loading tags data: ', error);
+      });
   }
 
- 
-  checkAnswers() {
-    // Set isChecking to true to show feedback
-    this.isChecking = true;
-    this.requestUpdate();
+  handleDragStart(event, tagOption) {
+    event.dataTransfer.setData('text/plain', tagOption);
   }
 
-  resetSelections() {
-    // Reset selected tags
-    this.selectedTags = [];
-    this.isChecking = false;
-    this.requestUpdate();
+  handleDragOver(event) {
+    event.preventDefault();
   }
 
-  renderFeedback() {
+  handleDrop(event) {
+    event.preventDefault();
+    const tagOption = event.dataTransfer.getData('text/plain');
+    this.addSelectedTag(tagOption);
+  }
+
+  addSelectedTag(tagOption) {
+    if (!this.tagAnswers.includes(tagOption)) {
+      this.tagAnswers = [...this.tagAnswers, tagOption];
+      this.requestUpdate();
+    }
+  }
+  firstUpdated() {
+    this.loadTagsData();
+  }
+
+  renderSelectedTags() {
     return html`
       <div>
-        ${this.tagsData.map(tagObj => {
-          const isSelected = this.selectedTags.includes(tagObj.tag);
-          const isCorrect = tagObj.correct;
-          return isSelected ? html`
-            <div class="tag ${isCorrect ? 'correct' : 'incorrect'}">${tagObj.tag}</div>
-            <div class="feedback">${isCorrect ? tagObj.feedback : `Incorrect - ${tagObj.feedback}`}</div>
-          ` : '';
-        })}
+        ${this.tagAnswers.map(
+          tag => html`
+            <div class="tag-option" draggable="true" @dragstart="${(e) => this.handleDragStart(e, tag)}">
+              ${tag}
+            </div>
+          `
+        )}
       </div>
     `;
+  }
+
+  submitAnswers() {
+    this.submitted = true;
+    console.log('Submitted answers:', this.tagAnswers);
   }
 }
 
 customElements.define('tagging-question', TaggingQuestion);
+
+
+
