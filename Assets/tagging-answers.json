@@ -35,43 +35,43 @@
         {
           "good form": {
             "correct": true,
-            "feedback": "The shape of the vase clearly demonstrates craftsmanship."
+            "feedback": "good form - The shape of the vase clearly demonstrates craftsmanship."
           }
         },
         {
           "poor taste": {
             "correct": false,
-            "feedback": "Taste is in the eye of the designer as well as the viewer."
+            "feedback": "poor taste - Taste is in the eye of the designer as well as the viewer."
           }
         },
         {
           "contrasting themes": {
             "correct": false,
-            "feedback": "There is uniformity in the shape, but there is no depth to this media to imply that it is contrasting with other figures."
+            "feedback": "contrasting themes - There is uniformity in the shape, but there is no depth to this media to imply that it is contrasting with other figures."
           }
         },
         {
           "AI": {
             "correct": true,
-            "feedback": "While a modification of prior work, this is still AI generative work."
+            "feedback": "AI - While a modification of prior work, this is still AI generative work."
           }
         },
         {
           "shading": {
             "correct": false,
-            "feedback": "While there is a light source and a shadow cast, shading is a term used for pencil based sketching."
+            "feedback": "shading - While there is a light source and a shadow cast, shading is a term used for pencil based sketching."
           }
         },
         {
           "original work": {
             "correct": true,
-            "feedback": "this character is not based on any person, place, or existing trope"
+            "feedback": "original work - this character is not based on any person, place, or existing trope"
           }
         },
         {
           "accessible": {
             "correct": false,
-            "feedback": "The color scheme while high contrast in some areas, loses form in others and has written text unrelated to the character."
+            "feedback": "accessible - The color scheme while high contrast in some areas, loses form in others and has written text unrelated to the character."
           }
         }
       ]
@@ -93,61 +93,61 @@
         {
           "edited": {
             "correct": true,
-            "feedback": "The colors were edited after the photo was taken."
+            "feedback": "edited - The colors were edited after the photo was taken."
           }
         },
         {
           "luminous": {
             "correct": true,
-            "feedback": "The colors pop out and are very bright."
+            "feedback": "luminous - The colors pop out and are very bright."
           }
         },
         {
           "animal": {
             "correct": true,
-            "feedback": "There is an animal within the photo."
+            "feedback": "animal - There is an animal within the photo."
           }
         },
         {
           "balanced": {
             "correct": false,
-            "feedback": "The colors are a bit over-bearing."
+            "feedback": "balanced - The colors are a bit over-bearing."
           }
         },
         {
           "original": {
             "correct": false,
-            "feedback": "After editing this photo can not be 100% original."
+            "feedback": "original - After editing, this photo can not be 100% original."
           }
         },
         {
           "minimal": {
             "correct": false,
-            "feedback": "The work had a lot going into it."
+            "feedback": "minimal - The work had a lot going into it."
           }
         },
         {
           "enigmatic": {
             "correct": false,
-            "feedback": "This is not very puzzling or difficult to understand."
+            "feedback": "enigmatic - This is not very puzzling or difficult to understand."
           }
         },
         {
           "realistic": {
             "correct": false,
-          "feedback": "Not realistic as it was edited after."
+          "feedback": "realistic - Not realistic as it was edited after."
           }
         },
         {
           "immersive": {
             "correct": true,
-            "feedback": "This draws in all viewers."
+            "feedback": "immersive - This draws in all viewers."
           }
         },
         {
           "intriguing": {
             "correct": true,
-            "feedback": "This promotes curiosity and makes people want to know more."
+            "feedback": "intriguing - This promotes curiosity and makes people want to know more."
           }
         }
       ]

@@ -16,6 +16,7 @@ export class TaggingQuestion extends DDD {
     this.selectedTags = [];
     this.submitted = false;
     this.loadTagsData();
+    this.isSubmitDisabled = false;
   }
 
   static get styles() {
@@ -23,33 +24,24 @@ export class TaggingQuestion extends DDD {
       super.styles,
       css`
         .tag-container {
-          position: relative;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          border: 2px solid #ccc;
-          border-radius: 8px;
-          padding: 20px;
-          height: auto;
-          max-width: 600px;
-          margin: auto;
-          overflow: hidden; 
-          transition: height 0.3s ease;
+        display:flex;
+        padding:var(--ddd-spacing-2);
+        margin: var(--ddd-spacing-8);
+        border: solid 3px var(--ddd-theme-default-skyBlue);
+        background:var(--ddd-theme-default-athertonViolet);
         }
 
-        .tag-container.submitted {
-          max-height: 1000px;
-        }
+       
 
         .image-container {
-          margin: 0px;
+        width:300px;
+        padding:var(--ddd-spacing-4);
+        margin: var(--ddd-spacing-3);
         }
 
         .image {
-          max-width: 100%;
-          height: auto;
-          border-radius: 8px;
+          max-width: 120%;
+          height:auto;
         }
 
         .tag-question {
@@ -60,23 +52,18 @@ export class TaggingQuestion extends DDD {
 
         .tag-option-container {
           width: 100%;
-          background-color: #f0f0f0;
-          padding: 20px;
-          border: 2px solid #ccc;
-          border-radius: 8px;
-          box-sizing: border-box;
+          background:var(--ddd-theme-default-white);
+          padding:var(--ddd-spacing-2);
+          border: solid 3px var(--ddd-theme-default-skyBlue);
         }
 
         .submission-container {
           display: flex;
-          height: auto;
           overflow-y: auto;
-          background-color: #f0f0f0;
-          padding: 10px;
-          border: 2px solid #ccc;
-          border-radius: 8px;
-          box-sizing: border-box;
-          margin-bottom: 20px;
+          background:var(--ddd-theme-default-disabled);
+          padding:var(--ddd-spacing-2);
+          border: solid 3px var(--ddd-theme-default-skyBlue);
+          margin-bottom: var(--ddd-spacing-8);
         }
 
         .user-choice-container {
@@ -84,101 +71,132 @@ export class TaggingQuestion extends DDD {
           flex-wrap: wrap;
           overflow-y: auto;
           width: 100%;
-          gap: 10px;
+          
         }
 
         #submit-button, #reset-button {
-          display: inline-flex;
-          position: relative;
-          right: 0;
-          padding: 15px 20px;
-          color: #fff;
-          border: none;
-          border-radius: 8px;
-          cursor: pointer;
-          transition: background-color 0.3s ease;
+        font-family:var(--ddd-font-primary-regular);
+        font-size: var(--ddd-font-size-4xs);
+        text-transform: uppercase;
+        cursor: pointer;
+        border: var(--ddd-spacing-1) solid;
+        padding: var(--ddd-spacing-2);
+        margin:var(--ddd-spacing-1);
+      
         }
 
         #submit-button {
-          background-color: #007bff;
+          background-color: var(--ddd-theme-default-infoLight);;
         }
 
         #reset-button {
           margin-top: 10px;
-          background-color: #e92539;
+          background-color: var(--ddd-theme-default-shrineTan);;
         }
 
         #submit-button:hover {
-          background-color: #005fc4;
+          background-color:var(--ddd-theme-default-alertImmediate);
         }
 
         #reset-button:hover {
-          background-color: #c82333;
+          background-color: var(--ddd-theme-default-alertImmediate);
         }
 
         .option-container {
           display: flex;
           flex-wrap: wrap;
           justify-content: center;
-          gap: 10px;
         }
 
         .tag-option {
+          
           padding: 8px 12px;
           border: 2px solid #ccc;
           border-radius: 8px;
-          background-color: #f0f0f0;
+          background-color: var(--ddd-theme-default-white);
           cursor: pointer;
           user-select: none;
-          transition: background-color 0.3s ease;
-        }
-
-        .tag-option:hover {
-          background-color: #e0e0e0;
-        }
+          
+       
+        } 
 
         .tag-option.correct {
-          outline: 2px solid #4caf50;
+          outline: 4px solid  var(--ddd-theme-default-forestGreen);;
         }
 
         .tag-option.incorrect {
-          outline: 2px solid #f44336;
+          outline: 4px solid var(--ddd-theme-default-original87Pink);
+        }
+        .feedback-container {
+          display: flex;
+          flex-direction: column; 
+          background:var(--ddd-theme-default-disabled);
+          padding:var(--ddd-spacing-4);
+          border: solid 3px var(--ddd-theme-default-skyBlue);
         }
       `
     ];
   }
-
   render() {
     return html`
       <confetti-container id="confetti">
         <div class="tag-container ${this.submitted ? "submitted" : ""}">
           <div class="image-container">
+            <slot name="image"></slot>
             <img class="image" src="${this.image}">
           </div>
           <div class="tag-question">
+            <slot name="question"></slot>
             <p><span>${this.question}</span></p>
           </div>
           <div class="tag-option-container">
-            
             <div class="submission-container">
               <div class="user-choice-container" @drop="${this.handleDropInAnswer}" @dragover="${this.allowDrop}">
                 ${this.selectedTags.map(tag => html`
                   <div class="tag-option" draggable="true" @dragstart="${this.handleDragStart}" @dragend="${this.handleDragEnd}">${tag}</div>
                 `)}
               </div>
-              <button id="submit-button" @click="${this.submitAnswers}">Submit</button>
+              <button id="submit-button" @click="${this.submitAnswers}" ?disabled="${this.isSubmitDisabled}">Check Answers</button>
               <button id="reset-button" @click="${this.reset}">Reset</button>
             </div>
             <div class="option-container" @dragover="${this.allowDrop}">
               ${this.tagOptions.map(tagOption => html`
-              <div class="tag-option" draggable="true" @dragstart="${this.handleDragStart}" @click="${this.handleTagClick}">${tagOption}</div>
+                <div class="tag-option" draggable="true" @dragstart="${this.handleDragStart}" @click="${this.handleTagClick}">${tagOption}</div>
               `)}
             </div>
           </div>
         </div>
       </confetti-container>
+      <div class="feedback-container">
+            <!-- Feedback will be rendered here -->
+      </div>
     `;
   }
+  
+  applyFeedback() {
+    if (this.submitted) {
+      // Loop through selected tags
+      this.selectedTags.forEach(tag => {
+        // Find the corresponding answer object for this tag
+        const tagAnswer = this.tagAnswers.find(answer => answer.hasOwnProperty(tag));
+        if (tagAnswer) {
+          // Apply correct/incorrect outline based on the answer
+          const correct = tagAnswer[tag].correct;
+          const tagElements = this.shadowRoot.querySelectorAll('.tag-option');
+          tagElements.forEach(tagElement => {
+            if (tagElement.textContent.trim() === tag) {
+              tagElement.classList.toggle('correct', correct);
+              tagElement.classList.toggle('incorrect', !correct);
+            }
+          });
+          // Render feedback
+          const feedbackContainer = this.shadowRoot.querySelector('.feedback-container');
+          feedbackContainer.innerHTML += `<p>${tagAnswer[tag].feedback}</p>`;
+        }
+      });
+    }
+  }
+
   handleTagClick(e) {
     const tagOption = e.target.textContent.trim();
     
@@ -193,7 +211,7 @@ export class TaggingQuestion extends DDD {
   }
 
   loadTagsData() {
-    fetch("./Assets/tagging-answers.json")
+    fetch("./assets/tagging-answers.json")
       .then(response => {
         if (!response.ok) {
           throw new Error("Failed to fetch tags data");
@@ -267,39 +285,7 @@ export class TaggingQuestion extends DDD {
     }
   }
   
-  applyFeedback() {
-    if (this.submitted) {
-      fetch("./src/tagging-answers.json")
-        .then(response => {
-          if (!response.ok) {
-            throw new Error("Failed to fetch tags data");
-          }
-          return response.json();
-        })
-        .then(tagsData => {
-          const tagSet = tagsData[this.answerSet];
-          if (tagSet) {
-            const tagAnswers = tagSet.tagAnswers || [];
-            const selectedTags = this.selectedTags;
-            const tagElements = Array.from(this.shadowRoot.querySelectorAll('.tag-option'));
-            tagElements.forEach(tagElement => {
-              const optionText = tagElement.textContent.trim();
-              const tagAnswer = tagAnswers.find(answer => answer.hasOwnProperty(optionText));
-              if (tagAnswer) {
-                const correct = tagAnswer[optionText].correct;
-                tagElement.classList.toggle('correct', correct && selectedTags.includes(optionText));
-                tagElement.classList.toggle('incorrect', !correct && selectedTags.includes(optionText));
-              }
-            });
-          } else {
-            throw new Error(`tagSet '${this.answerSet}' not found`);
-          }
-        })
-        .catch(error => {
-          console.error("Error applying feedback: ", error);
-        });
-    }
-  }
+
   
   addTag(tagOption) {
     if (!this.submitted && !this.selectedTags.includes(tagOption)) {
@@ -315,16 +301,36 @@ export class TaggingQuestion extends DDD {
     }
   }
 
+//Disables submit button and ensures that confetti only appears when all answers are correct
   submitAnswers() {
+      if (this.selectedTags.length === 0) {
+    console.log('No tags selected. Please select at least one tag.');
+    return;
+  }
     this.submitted = true;
     this.applyFeedback();
-    this.makeItRain();
+    this.isSubmitDisabled = true;
+    const allCorrect = this.selectedTags.every(tag => {
+      const tagAnswer = this.tagAnswers.find(answer => answer.hasOwnProperty(tag));
+      return tagAnswer ? tagAnswer[tag].correct : false;
+    });
+  
+    if (allCorrect) {
+      this.submitted = true;
+      this.isSubmitDisabled = true;
+      this.makeItRain();
+    }
   }
   
   reset() {
     this.submitted = false;
     this.tagOptions = [...this.tagOptions, ...this.selectedTags];
     this.selectedTags = [];
+  
+    // Reset anything inside the feedback container
+    const feedbackContainer = this.shadowRoot.querySelector('.feedback-container');
+    feedbackContainer.innerHTML = '';
+    this.isSubmitDisabled = false;
   }
   
 
@@ -344,7 +350,9 @@ export class TaggingQuestion extends DDD {
       answerSet: { type: String, reflect: true },
       tagOptions: { type: Array, attribute: "tag-options" },
       selectedTags: { type: Array, attribute: "selected-tags" },
-      submitted: { type: Boolean, reflect: true }
+      submitted: { type: Boolean, reflect: true },
+      isSubmitDisabled: { type: Boolean }
+      
     };
   }
 }
