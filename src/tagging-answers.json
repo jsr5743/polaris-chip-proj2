@@ -64,14 +64,90 @@
         },
         {
           "original work": {
-            "correct": false,
-            "feedback": "Artwork created from generative AI can not be original since it is trained on other artists' work."
+            "correct": true,
+            "feedback": "this character is not based on any person, place, or existing trope"
           }
         },
         {
           "accessible": {
             "correct": false,
             "feedback": "The color scheme while high contrast in some areas, loses form in others and has written text unrelated to the character."
+          }
+        }
+      ]
+    },
+    "chameleon": {
+      "tagOptions": [
+        "edited",
+        "luminous",
+        "animal",
+        "intriguing",
+        "balanced",
+        "original",
+        "minimal",
+        "enigmatic",
+        "realistic",
+        "immersive"
+      ],
+      "tagAnswers": [
+        {
+          "edited": {
+            "correct": true,
+            "feedback": "The colors were edited after the photo was taken."
+          }
+        },
+        {
+          "luminous": {
+            "correct": true,
+            "feedback": "The colors pop out and are very bright."
+          }
+        },
+        {
+          "animal": {
+            "correct": true,
+            "feedback": "There is an animal within the photo."
+          }
+        },
+        {
+          "balanced": {
+            "correct": false,
+            "feedback": "The colors are a bit over-bearing."
+          }
+        },
+        {
+          "original": {
+            "correct": false,
+            "feedback": "After editing this photo can not be 100% original."
+          }
+        },
+        {
+          "minimal": {
+            "correct": false,
+            "feedback": "The work had a lot going into it."
+          }
+        },
+        {
+          "enigmatic": {
+            "correct": false,
+            "feedback": "This is not very puzzling or difficult to understand."
+          }
+        },
+        {
+          "realistic": {
+            "correct": false,
+          "feedback": "Not realistic as it was edited after."
+          }
+        },
+        {
+          "immersive": {
+            "correct": true,
+            "feedback": "This draws in all viewers."
+          }
+        },
+        {
+          "intriguing": {
+            "correct": true,
+            "feedback": "This promotes curiosity and makes people want to know more."
           }
         }
       ]
