@@ -137,6 +137,7 @@ export class TaggingQuestion extends DDD {
       `
     ];
   }
+  //Tags not showing up in vercel deployment
   render() {
     return html`
       <confetti-container id="confetti">
@@ -168,19 +169,18 @@ export class TaggingQuestion extends DDD {
         </div>
       </confetti-container>
       <div class="feedback-container">
-            <!-- Feedback will be rendered here -->
       </div>
     `;
   }
   
   applyFeedback() {
     if (this.submitted) {
-      // Loop through selected tags
+      
       this.selectedTags.forEach(tag => {
-        // Find the corresponding answer object for this tag
+        
         const tagAnswer = this.tagAnswers.find(answer => answer.hasOwnProperty(tag));
         if (tagAnswer) {
-          // Apply correct/incorrect outline based on the answer
+         
           const correct = tagAnswer[tag].correct;
           const tagElements = this.shadowRoot.querySelectorAll('.tag-option');
           tagElements.forEach(tagElement => {
@@ -199,16 +199,17 @@ export class TaggingQuestion extends DDD {
 
   handleTagClick(e) {
     const tagOption = e.target.textContent.trim();
-    
-    // Check if the clicked tag is already in the solution area
     if (this.selectedTags.includes(tagOption)) {
-      // If so, remove it
+     
       this.removeTag(tagOption);
     } else {
-      // Otherwise, add it to the solution area
+     
       this.addTag(tagOption);
     }
   }
+
+
+
 
   loadTagsData() {
     fetch("./assets/tagging-answers.json")
